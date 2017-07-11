@@ -177,6 +177,7 @@ wire [ 5:0] G = (G_int[20]) ? 6'b0 : (G_int[19:18] == 2'b0) ? G_int[17:12] : 6'b
 wire [ 4:0] B = (B_int[20]) ? 5'b0 : (B_int[19:18] == 2'b0) ? B_int[17:13] : 5'b11111;	  
 
 wire [15:0] DecVData = {R,G,B};
+
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -204,6 +205,22 @@ always @(negedge resetx or posedge clk_llc)
 // delayed write clock for no grich
 wire   vd_wrx    = ~(~vpo_wrxd1 & vpo_wrxd3);
 
+
+//sim
+reg [15:0]Img0[0:21599];
+reg [15:0]Img1[0:21599];
+reg [15:0]Img2[0:21599];
+reg [1:0]Img_state;
+
+always @(negedge resetx or posedge odd)
+   if      (~resetx)      Img_state <= 2'b00;
+   else if (Img_state == 2'b00) Img_state <= 2'b01;
+   else if (Img_state == 2'b01) Img_state <= 2'b10;
+   else								  Img_state <= 2'b00;
+	
+
+//
+
 //------------------------------------------------------
 // 16bit SRAM address generation (64KB)
 // 180 x 120
@@ -228,24 +245,46 @@ wire   vd_wrx    = ~(~vpo_wrxd1 & vpo_wrxd3);
 reg [15:0] vdata;
 reg [15:0] vadr;
 reg A_addr;
+
 always @(negedge resetx or posedge clk_llc8)
    if      (~resetx)           vdata <= 16'b0;
-	else if (href2_wr)          vdata <= DecVData;
+	else if (href2_wr)          //vdata <= DecVData;
+	begin
+		if(Img_state[1:0] == 2'b00)
+		begin
+			Img0[vadr[14:0]] <= {5'b11111,6'b0,5'b0};
+		end
+		else if(Img_state[1:0] == 2'b01)
+		begin
+			Img1[vadr[14:0]] <= {5'b0,6'b111111,5'b0};
+		end
+		else if(Img_state[1:0] == 2'b10)
+		begin
+			Img2[vadr[14:0]] <= {5'b0,6'b0,5'b11111};
+		end
+	end
 
 always @(negedge resetx or posedge clk_llc8)
-   if      (~resetx)           vadr[14:0] <= 15'b0;
-   else if (~oddframe)         vadr[14:0] <= 15'b0;
-   else if (href2_wr)          vadr[14:0] <= vadr[14:0] + 1'b1;
-
+   if      (~resetx)           
+	begin
+		vadr[14:0] <= 15'b0;
+	end
+	else if (~oddframe)
+	begin
+		vadr[14:0] <= 15'b0;
+	end
+	else if (href2_wr)     
+	begin	
+		vadr[14:0] <= vadr[14:0] + 1'b1;
+	end
+	
 always @(negedge resetx or posedge odd)
    if      (~resetx)       vadr[15] <= 1'b0;
-   else                    vadr[15] <= ~vadr[15];
+	else                    vadr[15] <= ~vadr[15];
 	
 always @(negedge resetx or posedge Sys_clk)
    if      (~resetx)       A_addr <= 1'b0;
    else                    A_addr <= AMAmem_irq1;
-
-
 
 //----------------------------------------------------------------------------------
 // External Interrupt Generation
@@ -348,7 +387,7 @@ always @(mcs0 or mcs1 or mcs2 or mcs3 or mcs4 or mcs5 or mcs6 or AMAmem_csx or v
               else                    	ns = s5;
               
     mcs6    :                     		ns = s0;
-
+	 
     default :                 			ns = s0;          
   endcase
 end  
@@ -369,7 +408,8 @@ assign vmem_rden     = mcs5; 		// SRAM Read  //~mcs5;
 
 assign AMAmem_data  = ( ~AMAmem_csx ) ? vmem_q : 16'bZ;
 
-assign vmem_data    = ( mcs1 | mcs2 ) ? vdata : 16'bZ ;
+assign vmem_data    = ( mcs1 | mcs2 ) ? ((Img_state[1:0] == 2'b00) ? Img0[vadr[14:0]] : (Img_state[1:0] == 2'b01) ? Img1[vadr[14:0]] : (Img_state[1:0] == 2'b10) ? Img2[vadr[14:0]] : 16'bZ):16'bZ; //vdata : 16'bZ ;
+
 //assign vmem_data    = ( (~mcs0 & mcs1) | (~mcs0 & mcs2) ) ? vdata : 16'bZ ;
 
 assign vmem_addr     = ( mcs1 | mcs2 ) ? vadr : {A_addr, AMAmem_adr};	// 16bit SRAM address

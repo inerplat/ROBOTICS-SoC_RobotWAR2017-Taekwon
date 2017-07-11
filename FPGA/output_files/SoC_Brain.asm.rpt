@@ -1,5 +1,5 @@
 Assembler report for SoC_Brain
-Sat Jul 08 20:09:32 2017
+Tue Jul 11 01:31:24 2017
 Quartus II 64-Bit Version 13.1.0 Build 162 10/23/2013 SJ Web Edition
 
 
@@ -11,7 +11,7 @@ Quartus II 64-Bit Version 13.1.0 Build 162 10/23/2013 SJ Web Edition
   3. Assembler Settings
   4. Assembler Encrypted IP Cores Summary
   5. Assembler Generated Files
-  6. Assembler Device Options: C:/SoC Brain/output_files/SoC_Brain.sof
+  6. Assembler Device Options: C:/altera/SoC Brain/output_files/SoC_Brain.sof
   7. Assembler Messages
 
 
@@ -38,7 +38,7 @@ applicable agreement for further details.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Sat Jul 08 20:09:32 2017 ;
+; Assembler Status      ; Successful - Tue Jul 11 01:31:23 2017 ;
 ; Revision Name         ; SoC_Brain                             ;
 ; Top-level Entity Name ; FPGA_Processing                       ;
 ; Family                ; Cyclone IV E                          ;
@@ -88,24 +88,24 @@ applicable agreement for further details.
 +--------+------------------------+--------------+
 
 
-+-----------------------------------------+
-; Assembler Generated Files               ;
-+-----------------------------------------+
-; File Name                               ;
-+-----------------------------------------+
-; C:/SoC Brain/output_files/SoC_Brain.sof ;
-+-----------------------------------------+
++------------------------------------------------+
+; Assembler Generated Files                      ;
++------------------------------------------------+
+; File Name                                      ;
++------------------------------------------------+
+; C:/altera/SoC Brain/output_files/SoC_Brain.sof ;
++------------------------------------------------+
 
 
-+-------------------------------------------------------------------+
-; Assembler Device Options: C:/SoC Brain/output_files/SoC_Brain.sof ;
-+----------------+--------------------------------------------------+
-; Option         ; Setting                                          ;
-+----------------+--------------------------------------------------+
-; Device         ; EP4CE75U19I7                                     ;
-; JTAG usercode  ; 0x004DC1CC                                       ;
-; Checksum       ; 0x004DC1CC                                       ;
-+----------------+--------------------------------------------------+
++--------------------------------------------------------------------------+
+; Assembler Device Options: C:/altera/SoC Brain/output_files/SoC_Brain.sof ;
++----------------+---------------------------------------------------------+
+; Option         ; Setting                                                 ;
++----------------+---------------------------------------------------------+
+; Device         ; EP4CE75U19I7                                            ;
+; JTAG usercode  ; 0x00512613                                              ;
+; Checksum       ; 0x00512613                                              ;
++----------------+---------------------------------------------------------+
 
 
 +--------------------+
@@ -114,14 +114,14 @@ applicable agreement for further details.
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Assembler
     Info: Version 13.1.0 Build 162 10/23/2013 SJ Web Edition
-    Info: Processing started: Sat Jul 08 20:09:28 2017
+    Info: Processing started: Tue Jul 11 01:31:09 2017
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off SoC_Brain -c SoC_Brain
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus II 64-Bit Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 512 megabytes
-    Info: Processing ended: Sat Jul 08 20:09:32 2017
-    Info: Elapsed time: 00:00:04
-    Info: Total CPU time (on all processors): 00:00:04
+    Info: Peak virtual memory: 507 megabytes
+    Info: Processing ended: Tue Jul 11 01:31:24 2017
+    Info: Elapsed time: 00:00:15
+    Info: Total CPU time (on all processors): 00:00:14
 
 
