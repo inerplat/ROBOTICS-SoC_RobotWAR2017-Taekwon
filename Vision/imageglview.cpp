@@ -6,12 +6,12 @@
 ImageGLView::ImageGLView(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     isMouseClicked(false),
-    redMax(0),
-    redMin(255),
-    greenMax(0),
-    greenMin(255),
-    blueMax(0),
-    blueMin(255)
+    redMax(255),
+    redMin(130),
+    greenMax(255),
+    greenMin(130),
+    blueMax(255),
+    blueMin(130)
 {
 
 }
@@ -34,6 +34,10 @@ void ImageGLView::slotImageLoad(QPixmap image)
     this->repaint();
 }
 
+int dir[4][2] = { {-1, 0},
+                  {0, -1}, {0, 1},
+                  {1, 0}};
+
 /**
  * @brief ImageGLView::paintEvent
  * @param event
@@ -54,26 +58,48 @@ void ImageGLView::paintEvent(QPaintEvent *event)
 
     painter.fillRect(0, 0, painterWidth, painterHeight, Qt::black);
 
-    if( painterWidth/4*3 < painterHeight )  {
-        startX = 0;
-        endX   = painterWidth;
-        startY = (painterHeight-(painterWidth/4*3))/2;
-        endY   = painterHeight-startY;
-    }
-    else    {
-        startX = (painterWidth-painterHeight/3*4)/2;
-        endX   = painterWidth-startX;
-        startY = 0;
-        endY   = painterHeight;
-    }
-
-
     QImage image = frameImage.toImage();
-    QRect rectDrawArea(startX, startY, endX-startX, endY-startY);
+    bool check[120][180] = {0};
+    bool preCheck[120][180] = {0};
+    QRect rectDrawArea(0, 0, 180, 120);
 
-    int len = 180*120*4;
+    int len = 86400;    // 180 * 120 * 4
     unsigned char *imageData = image.bits();
 
+    int red, green, blue;
+    int i, j, k;
+    int n_i, n_j;
+
+    // filter
+    /////////////////////////////////////////
+    for(i=1; i<119; i++)    {
+        for(j=1; j<179; j++)    {
+            red = imageData[(i*720) + (j*4)];
+            green = imageData[(i*720) + (j*4) + 1];
+            blue = imageData[(i*720) + (j*4) + 2];
+
+            for(k=0; k<4; k++)  {
+                n_i = i + dir[k][0];
+                n_j = j + dir[k][1];
+
+                red += imageData[(n_i * 720) + (n_j * 4)];
+                green += imageData[(n_i * 720) + (n_j * 4) + 1];
+                blue += imageData[(n_i * 720) + (n_j * 4) + 2];
+            }
+            red /= 5;
+            green /= 5;
+            blue /= 5;
+
+            imageData[(i * 720) + (j * 4)] = red;
+            imageData[(i * 720) + (j * 4) + 1] = green;
+            imageData[(i * 720) + (j * 4) + 2] = blue;
+        }
+    }
+    /////////////////////////////////////////
+
+
+    // detection
+    /////////////////////////////////////////
     for(int i=0; i<len; i+=4)   {
         int blue = imageData[i+0];
         int green = imageData[i+1];
@@ -83,15 +109,72 @@ void ImageGLView::paintEvent(QPaintEvent *event)
             (green <= greenMax && green >= greenMin) &&
             (blue <= blueMax && blue >= blueMin) )
         {
-            imageData[i+0] = 0;
-            imageData[i+1] = 0;
-            imageData[i+2] = 255;
+            check[i/720][(i%720)/4] = true;
+        }
+    }
+    /////////////////////////////////////////
+
+
+    // 로봇 팽창
+    /////////////////////////////////////////
+    for(i=1; i<119; i++)    {
+        for(j=1; j<179; j++)    {
+            if( check[i][j] == false )  {
+                for(k=0; k<4; k++)  {
+                    n_i = i + dir[k][0];
+                    n_j = j + dir[k][1];
+
+                    preCheck[n_i][n_j] = true;
+                }
+            }
         }
     }
 
-    painter.drawImage(rectDrawArea, image);
+    for(i=0; i<120; i++)    {
+        for(j=0; j<180; j++)    {
+            if( preCheck[i][j] == true )  {
+                preCheck[i][j] = false;
+                check[i][j] = false;
+            }
+        }
+    }
+    /////////////////////////////////////////
 
-    //            painter.drawEllipse(QPoint((loc%2560)/4, loc/2560), 10, 10);
+
+    // 로봇 팽창
+    /////////////////////////////////////////
+    for(i=1; i<119; i++)    {
+        for(j=1; j<179; j++)    {
+            if( check[i][j] == false )  {
+                for(k=0; k<4; k++)  {
+                    n_i = i + dir[k][0];
+                    n_j = j + dir[k][1];
+
+                    preCheck[n_i][n_j] = true;
+                }
+            }
+        }
+    }
+
+    for(i=0; i<120; i++)    {
+        for(j=0; j<180; j++)    {
+            if( preCheck[i][j] == true )  {
+                preCheck[i][j] = false;
+                check[i][j] = false;
+            }
+
+            if( check[i][j] == true )   {
+                int t = (i * 720) + (j * 4);
+                imageData[t] = 0;
+                imageData[t+1] = 255;
+                imageData[t+2] = 0;
+            }
+        }
+    }
+    /////////////////////////////////////////
+
+
+    painter.drawImage(rectDrawArea, image);
 }
 
 /**
