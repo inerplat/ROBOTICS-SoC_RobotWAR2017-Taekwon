@@ -86,18 +86,46 @@ void ImageGLView::paintEvent(QPaintEvent *event)
                 green += imageData[(n_i * 720) + (n_j * 4) + 1];
                 blue += imageData[(n_i * 720) + (n_j * 4) + 2];
             }
-            red /= 5;
-            green /= 5;
-            blue /= 5;
 
-            imageData[(i * 720) + (j * 4)] = red;
-            imageData[(i * 720) + (j * 4) + 1] = green;
-            imageData[(i * 720) + (j * 4) + 2] = blue;
+            imageData[(i * 720) + (j * 4)] = red / 5;
+            imageData[(i * 720) + (j * 4) + 1] = green / 5;
+            imageData[(i * 720) + (j * 4) + 2] = blue / 5;
         }
     }
     /////////////////////////////////////////
 
+    painter.drawImage(rectDrawArea, image);
 
+    for(i=len-4; i>=0; i--) {
+        int blue = imageData[i+0];
+        int green = imageData[i+1];
+        int red = imageData[i+2];
+
+        if( (red <= redMax && red >= redMin) &&
+            (green <= greenMax && green >= greenMin) &&
+            (blue <= blueMax && blue >= blueMin) )
+        {
+            int t = i/4;
+            int x = t%180, y = t/180;
+            painter.setPen(QColor(255, 0, 0));
+            painter.drawEllipse(QPoint(x, y), 5, 5);
+            if( x < 80 )
+                qDebug("Right turn    x : %d,  y : %d", t%180, t/180);
+            else if( x > 100 )
+                qDebug("Left turn     x : %d,  y : %d", t%180, t/180);
+            else    {
+                if( y > 60 )
+                    qDebug("Attack        x : %d,  y : %d", t%180, t/180);
+                else
+                    qDebug("Forward       x : %d,  y : %d", t%180, t/180);
+            }
+
+            break;
+        }
+    }
+
+
+    /*
     // detection
     /////////////////////////////////////////
     for(int i=0; i<len; i+=4)   {
@@ -172,9 +200,8 @@ void ImageGLView::paintEvent(QPaintEvent *event)
         }
     }
     /////////////////////////////////////////
+    */
 
-
-    painter.drawImage(rectDrawArea, image);
 }
 
 /**
