@@ -7,11 +7,11 @@ ImageGLView::ImageGLView(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     isMouseClicked(false),
     redMax(255),
-    redMin(130),
+    redMin(100),
     greenMax(255),
-    greenMin(130),
+    greenMin(100),
     blueMax(255),
-    blueMin(130)
+    blueMin(100)
 {
 
 }
@@ -22,6 +22,17 @@ ImageGLView::ImageGLView(QWidget *parent) :
 ImageGLView::~ImageGLView()
 {
 
+}
+
+/**
+ * @brief ImageGLView::abs
+ * @param n
+ */
+int ImageGLView::abs(int n)
+{
+    if( n < 0 )
+        n *= -1;
+    return n;
 }
 
 /**
@@ -53,15 +64,15 @@ void ImageGLView::paintEvent(QPaintEvent *event)
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    painterWidth  = painter.window().width();
-    painterHeight = painter.window().height();
+    painterWidth  = 180;
+    painterHeight = 120;
 
     painter.fillRect(0, 0, painterWidth, painterHeight, Qt::black);
 
     QImage image = frameImage.toImage();
-    bool check[120][180] = {0};
-    bool preCheck[120][180] = {0};
-    QRect rectDrawArea(0, 0, 180, 120);
+    bool check[180][120] = {0};
+    bool preCheck[180][120] = {0};
+    QRect rectDrawArea(0, 0, painterWidth, painterHeight);
 
     int len = 86400;    // 180 * 120 * 4
     unsigned char *imageData = image.bits();
@@ -69,11 +80,16 @@ void ImageGLView::paintEvent(QPaintEvent *event)
     int red, green, blue;
     int i, j, k;
     int n_i, n_j;
+    int loc[180] = {0};
+
+    // 카메라 비율때문에 가로 0 ~ 179가 아닌 16 ~ 163 범위 처리
+
+    painter.setPen(QColor(0, 255, 0));
 
     // filter
     /////////////////////////////////////////
-    for(i=1; i<119; i++)    {
-        for(j=1; j<179; j++)    {
+    for(i=1; i<painterHeight; i++)    {
+        for(j=16; j<164; j++)    {
             red = imageData[(i*720) + (j*4)];
             green = imageData[(i*720) + (j*4) + 1];
             blue = imageData[(i*720) + (j*4) + 2];
@@ -94,6 +110,34 @@ void ImageGLView::paintEvent(QPaintEvent *event)
     }
     /////////////////////////////////////////
 
+    painter.drawImage(rectDrawArea, image);
+
+    for(j=16; j<164; j++)    {
+        for(i=painterHeight-1; i>=0; i--)   {
+            int t = (i * 720) + (j * 4);
+
+            int blue = imageData[t+0];
+            int green = imageData[t+1];
+            int red = imageData[t+2];
+
+            if( (red >= redMin) &&
+                (green >= greenMin) &&
+                (blue >= blueMin) )  {
+                // white detected
+            }
+            else    {
+                loc[j] = i;
+                if( abs(loc[j-1] - loc[j]) < 5 )
+                    loc[j] = loc[j-1];
+
+                painter.drawEllipse(QPoint(j, loc[j]), 1, 1);
+                break;
+            }
+        }
+    }
+
+
+    /*
     painter.drawImage(rectDrawArea, image);
 
     for(i=len-4; i>=0; i--) {
@@ -123,6 +167,7 @@ void ImageGLView::paintEvent(QPaintEvent *event)
             break;
         }
     }
+    */
 
 
     /*
@@ -166,6 +211,7 @@ void ImageGLView::paintEvent(QPaintEvent *event)
             }
         }
     }
+
     /////////////////////////////////////////
 
 
@@ -202,6 +248,7 @@ void ImageGLView::paintEvent(QPaintEvent *event)
     /////////////////////////////////////////
     */
 
+//    painter.drawImage(rectDrawArea, image);
 }
 
 /**
@@ -248,7 +295,10 @@ void ImageGLView::mouseMoveEvent(QMouseEvent *event)
         greenMin = (greenMin>green) ? green : greenMin;
         blueMax  = (blueMax<blue) ? blue : blueMax;
         blueMin  = (blueMin>blue) ? blue : blueMin;
+
     }
+
+    qDebug("%d %d", event->x(), event->y());
 
     qDebug("%d %d    %d %d    %d %d", redMax, redMin, greenMax, greenMin, blueMax, blueMin);
 }

@@ -41,6 +41,8 @@ private:
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
+    int abs(int n);
+
 public slots:
     void slotImageLoad(QPixmap);
 };

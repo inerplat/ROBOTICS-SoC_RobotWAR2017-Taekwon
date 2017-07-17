@@ -36,6 +36,7 @@ void Widget::initWidget()
     imageGLView = new ImageGLView();
 
     imageGLView->setMinimumSize(180, 120);
+    imageGLView->setMaximumSize(180, 120);
     ui->screenLayout->addWidget(imageGLView);
 
     ui->stopButton->setEnabled(false);
@@ -174,7 +175,7 @@ void Widget::slotCamImageCapture(int pId, QImage pPreview)
 void Widget::slotCaptureLoad()
 {
     QRect rect(0, 0, viewFinder->width(), viewFinder->height());
-    QPixmap captureImage = viewFinder->grab(rect).scaled(180, 120);
+    QPixmap captureImage = viewFinder->grab(rect).scaled(180, 120, Qt::IgnoreAspectRatio);
 
     emit signalFrameReady(captureImage);
 }
