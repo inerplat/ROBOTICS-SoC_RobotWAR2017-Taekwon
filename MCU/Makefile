@@ -25,7 +25,7 @@ LDLIBS	= -lm -lc
 
 export AS LD CC CPP AR NM STRIP OBJCOPY OBJDUMP RANLIB CFLAGS
 
-PROJ = HURO
+PROJ = ROBOTICS
 
 OBJS = main.o graphic_api.o img_analysis.o img_process.o robot_motion.o robot_protocol.o uart_api.o
 
