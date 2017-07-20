@@ -1,16 +1,16 @@
-Fitter Status : Successful - Tue Jul 11 01:31:03 2017
+Fitter Status : Successful - Thu Jul 20 02:57:41 2017
 Quartus II 64-Bit Version : 13.1.0 Build 162 10/23/2013 SJ Web Edition
 Revision Name : SoC_Brain
 Top-level Entity Name : FPGA_Processing
 Family : Cyclone IV E
 Device : EP4CE75U19I7
 Timing Models : Final
-Total logic elements : 1,014 / 75,408 ( 1 % )
-    Total combinational functions : 780 / 75,408 ( 1 % )
-    Dedicated logic registers : 687 / 75,408 ( < 1 % )
-Total registers : 687
+Total logic elements : 1,207 / 75,408 ( 2 % )
+    Total combinational functions : 950 / 75,408 ( 1 % )
+    Dedicated logic registers : 780 / 75,408 ( 1 % )
+Total registers : 780
 Total pins : 60 / 293 ( 20 % )
 Total virtual pins : 0
-Total memory bits : 1,418,752 / 2,810,880 ( 50 % )
-Embedded Multiplier 9-bit elements : 0 / 400 ( 0 % )
+Total memory bits : 1,073,152 / 2,810,880 ( 38 % )
+Embedded Multiplier 9-bit elements : 19 / 400 ( 5 % )
 Total PLLs : 1 / 4 ( 25 % )

@@ -176,7 +176,7 @@ wire [ 4:0] R = (R_int[20]) ? 5'b0 : (R_int[19:18] == 2'b0) ? R_int[17:13] : 5'b
 wire [ 5:0] G = (G_int[20]) ? 6'b0 : (G_int[19:18] == 2'b0) ? G_int[17:12] : 6'b111111;
 wire [ 4:0] B = (B_int[20]) ? 5'b0 : (B_int[19:18] == 2'b0) ? B_int[17:13] : 5'b11111;	  
 
-wire [15:0] DecVData = {R,G,B};
+wire [15:0] DecVData = {R, G, B};
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -201,25 +201,8 @@ always @(negedge resetx or posedge clk_llc)
    else                        vpo_wrxd3 <= vpo_wrxd2;
 
 
-
 // delayed write clock for no grich
 wire   vd_wrx    = ~(~vpo_wrxd1 & vpo_wrxd3);
-
-
-//sim
-reg [15:0]Img0[0:21599];
-reg [15:0]Img1[0:21599];
-reg [15:0]Img2[0:21599];
-reg [1:0]Img_state;
-
-always @(negedge resetx or posedge odd)
-   if      (~resetx)      Img_state <= 2'b00;
-   else if (Img_state == 2'b00) Img_state <= 2'b01;
-   else if (Img_state == 2'b01) Img_state <= 2'b10;
-   else								  Img_state <= 2'b00;
-	
-
-//
 
 //------------------------------------------------------
 // 16bit SRAM address generation (64KB)
@@ -244,26 +227,16 @@ always @(negedge resetx or posedge odd)
 
 reg [15:0] vdata;
 reg [15:0] vadr;
+
 reg A_addr;
 
 always @(negedge resetx or posedge clk_llc8)
    if      (~resetx)           vdata <= 16'b0;
-	else if (href2_wr)          //vdata <= DecVData;
+	else if (href2_wr)          
 	begin
-		if(Img_state[1:0] == 2'b00)
-		begin
-			Img0[vadr[14:0]] <= {5'b11111,6'b0,5'b0};
-		end
-		else if(Img_state[1:0] == 2'b01)
-		begin
-			Img1[vadr[14:0]] <= {5'b0,6'b111111,5'b0};
-		end
-		else if(Img_state[1:0] == 2'b10)
-		begin
-			Img2[vadr[14:0]] <= {5'b0,6'b0,5'b11111};
-		end
+			vdata <= DecVData;
 	end
-
+	
 always @(negedge resetx or posedge clk_llc8)
    if      (~resetx)           
 	begin
@@ -406,15 +379,22 @@ assign vmem_rden     = mcs5; 		// SRAM Read  //~mcs5;
 //assign mem_bex[0]  = ~(mcs1 | mcs3 | mcs5) ;	// 16bit LSB Byte enable
 
 
-assign AMAmem_data  = ( ~AMAmem_csx ) ? vmem_q : 16'bZ;
+assign AMAmem_data  = ( ~AMAmem_csx ) ? ram_data:16'bZ;//vmem_q : 16'bZ;
 
-assign vmem_data    = ( mcs1 | mcs2 ) ? ((Img_state[1:0] == 2'b00) ? Img0[vadr[14:0]] : (Img_state[1:0] == 2'b01) ? Img1[vadr[14:0]] : (Img_state[1:0] == 2'b10) ? Img2[vadr[14:0]] : 16'bZ):16'bZ; //vdata : 16'bZ ;
+assign vmem_data    = ( mcs1 | mcs2 ) ? vdata:16'bZ;//((Img_state[2:1] == 2'b00) ? {Img0_R[vadr[14:0]],Img0_G[vadr[14:0]],Img0_B[vadr[14:0]]} : (Img_state[2:1] == 2'b01) ? {Img1_R[vadr[14:0]],Img1_G[vadr[14:0]],Img1_B[vadr[14:0]]} : (Img_state[2:1] == 2'b10) ? {Img2_R[vadr[14:0]],Img2_G[vadr[14:0]],Img2_B[vadr[14:0]]} : 16'bZ):16'bZ; //vdata : 16'bZ ;
 
 //assign vmem_data    = ( (~mcs0 & mcs1) | (~mcs0 & mcs2) ) ? vdata : 16'bZ ;
 
-assign vmem_addr     = ( mcs1 | mcs2 ) ? vadr : {A_addr, AMAmem_adr};	// 16bit SRAM address
+assign vmem_addr     = ( mcs1 | mcs2 ) ? vadr : AMA_adr;//( mcs1 | mcs2 ) ? vadr : {A_addr, AMAmem_adr};	// 16bit SRAM address
 //assign vmem_addr     = ( (~mcs0 & mcs1) | (~mcs0 & mcs2) ) ? vadr : AMAmem_adr;
 
+reg [15:0] AMA_adr;
+reg [14:0] Adr;
+reg [8:0] ram_R;
+reg [9:0] ram_G;
+reg [8:0] ram_B;
+
+wire [15:0] ram_data = {ram_B[8:4], ram_G[9:4], ram_R[8:4]};
 
 //-----------------------------------------------------------------
 // FPGA waitx signal generation
@@ -434,15 +414,14 @@ reg  waitx_d8;
 reg  waitx_d9;
 reg  waitx_d10;
 
-
 always @(negedge resetx or posedge Sys_clk)
    if      (~resetx)     	waitx_d1 <= 1'b0;
-   else                      	waitx_d1 <= waitx;
-
+   else                    waitx_d1 <= waitx;
+	
 always @(negedge resetx or posedge Sys_clk)
    if      (~resetx)         	waitx_d2 <= 1'b0;
    else                     	waitx_d2 <= waitx_d1;
-
+	
 always @(negedge resetx or posedge Sys_clk)
    if      (~resetx)         	waitx_d3 <= 1'b0;
    else                     	waitx_d3 <= waitx_d2;
@@ -474,7 +453,90 @@ always @(negedge resetx or posedge Sys_clk)
 always @(negedge resetx or posedge Sys_clk)
    if      (~resetx)         	waitx_d10 <= 1'b0;
    else                     	waitx_d10 <= waitx_d9;   
+	
+reg [3:0] ram_state = 4'b0000;	
 
+always @(negedge resetx or posedge Sys_clk)
+begin
+	if (~resetx) ram_state[3:0] <= 4'b0000;
+	else if(Adr[14:0] != AMAmem_adr[14:0]) 
+	begin
+		Adr[14:0] <= AMAmem_adr[14:0];
+		ram_state[3:0] <= 4'b0001;
+	end
+	else if(ram_state[3:0] == 4'b0001)
+	begin
+		AMA_adr <= {A_addr, AMAmem_adr} - 'd181;
+		ram_R <= (vmem_q[4:0] << 0);
+		ram_G <= (vmem_q[10:5] << 0);
+		ram_B <= (vmem_q[15:11] << 0);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b0010)
+	begin
+		AMA_adr <= AMA_adr + 'd1;
+		ram_R <= ram_R + (vmem_q[4:0] << 1);
+		ram_G <= ram_G + (vmem_q[10:5] << 1);
+		ram_B <= ram_B + (vmem_q[15:11] << 1);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b0011)
+	begin
+		AMA_adr <= AMA_adr + 'd1;
+		ram_R <= ram_R + (vmem_q[4:0] << 0);
+		ram_G <= ram_G + (vmem_q[10:5] << 0);
+		ram_B <= ram_B + (vmem_q[15:11] << 0);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b0100)
+	begin
+		AMA_adr <= AMA_adr + 'd178;
+		ram_R <= ram_R + (vmem_q[4:0] << 1);
+		ram_G <= ram_G + (vmem_q[10:5] << 1);
+		ram_B <= ram_B + (vmem_q[15:11] << 1);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b0101)
+	begin
+		AMA_adr <= AMA_adr + 'd1;
+		ram_R <= ram_R + (vmem_q[4:0] << 2);
+		ram_G <= ram_G + (vmem_q[10:5] << 2);
+		ram_B <= ram_B + (vmem_q[15:11] << 2);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b0110)
+	begin
+		AMA_adr <= AMA_adr + 'd1;
+		ram_R <= ram_R + (vmem_q[4:0] << 1);
+		ram_G <= ram_G + (vmem_q[10:5] << 1);
+		ram_B <= ram_B + (vmem_q[15:11] << 1);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b0111)
+	begin
+		AMA_adr <= AMA_adr + 'd178;
+		ram_R <= ram_R + (vmem_q[4:0] << 0);
+		ram_G <= ram_G + (vmem_q[10:5] << 0);
+		ram_B <= ram_B + (vmem_q[15:11] << 0);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b1000)
+	begin
+		AMA_adr <= AMA_adr + 'd1;
+		ram_R <= ram_R + (vmem_q[4:0] << 1);
+		ram_G <= ram_G + (vmem_q[10:5] << 1);
+		ram_B <= ram_B + (vmem_q[15:11] << 1);
+		ram_state[3:0] <= ram_state[3:0] + 'b1;
+	end
+	else if(ram_state[3:0] == 4'b1001)
+	begin
+		AMA_adr <= AMA_adr + 'd1;
+		ram_R <= ram_R + (vmem_q[4:0] << 0);
+		ram_G <= ram_G + (vmem_q[10:5] << 0);
+		ram_B <= ram_B + (vmem_q[15:11] << 0);
+		ram_state[3:0] <= 4'b0;
+	end
+end
 
 assign AMAmem_waitx = waitx & waitx_d1 & waitx_d2 & waitx_d3 & waitx_d4 & waitx_d5 & waitx_d6 & waitx_d7 & waitx_d8 & waitx_d9 & waitx_d10;
 
