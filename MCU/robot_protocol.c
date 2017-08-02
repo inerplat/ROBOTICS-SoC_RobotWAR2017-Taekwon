@@ -16,8 +16,8 @@
 void DelayLoop(int delay_time)
 {
 	//AMAZON-II = 166MHz
-	// ms ´ÜÀ§·Î Ä«¿îÆ® ÇÏµµ·Ï Á¦ÀÛ
-	delay_time += 300; // ¸ğ¼Ç °£ Ãß°¡ µô·¹ÀÌ (¸ğ¼Ç ¾ÃÈû¹æÁö)
+	// ms ë‹¨ìœ„ë¡œ ì¹´ìš´íŠ¸ í•˜ë„ë¡ ì œì‘
+	delay_time += 300; // ëª¨ì…˜ ê°„ ì¶”ê°€ ë”œë ˆì´ (ëª¨ì…˜ ì”¹í˜ë°©ì§€)
 	delay_time *= 1660;
 	
 	while(delay_time)
@@ -56,62 +56,125 @@ void default_motion()
 	printf("motion end\n");
 }
 
-void move_forward() // ¾ÕÀ¸·Î ÇÑ°ÉÀ½
+void move_forward() // ì•ìœ¼ë¡œ í•œê±¸ìŒ
 {
 	printf("\nmotion started\n");
 	Send_Command(0x04, 0xfb);
-	DelayLoop(378);
+	DelayLoop(277);
 	printf("motion end\n");
 }
 
-void move_forwardx2() // ¾ÕÀ¸·Î ¿¬¼Ó µÎ°ÉÀ½
+void move_forwardx2() // ì•ìœ¼ë¡œ ì—°ì† ë‘ê±¸ìŒ
 {
 	printf("\nmotion started\n");
 	Send_Command(0x05, 0xfa);
-	DelayLoop(785); // 785ms
+	DelayLoop(576); // 785ms
 	printf("motion end\n");
 }
-void move_back() // µÚ·Î ÇÑ°ÉÀ½
+void move_back() // ë’¤ë¡œ í•œê±¸ìŒ
 {
 	printf("\nmotion started\n");
 	Send_Command(0x06, 0xf9);
-	DelayLoop(378);
+	DelayLoop(277);
 	printf("motion end\n");
 }
 
-void turn_left()// ¿ŞÂÊÀ¸·Î 30µµ È¸Àü
+void turn_left()// ì™¼ìª½ìœ¼ë¡œ 30ë„ íšŒì „
 {
 	printf("\nmotion started\n");
 	Send_Command(0x08, 0xf7);
-	DelayLoop(896);
+	DelayLoop(815);
 	printf("motion end\n");
 }
-void turn_right() // ¿À¸¥ÂÊÀ¸·Î 30µµ È¸Àü
+void turn_right() // ì˜¤ë¥¸ìª½ìœ¼ë¡œ 30ë„ íšŒì „
 {
 	printf("\nmotion started\n");
 	Send_Command(0x09, 0xf6);
-	DelayLoop(896);
+	DelayLoop(815);
 	printf("motion end\n");
 }
 
-void arm_attack_1() // Âî¸£±â
+void arm_attack_1() // ì°Œë¥´ê¸°
 {
 	Send_Command(0x0b, 0xf4);
 	DelayLoop(976);
 }
-void arm_attack_2() // ½Î´Ú
+void arm_attack_2() // ì‹¸ë‹¥
 {
 	Send_Command(0x0c, 0xf3);
-	DelayLoop(633);
+	DelayLoop(691);
+}
+void arm_attack_3() // ëŒ€ê°ì„  ì• ìœ„ë¡œ
+{
+	Send_Command(0x0d, 0xf2);
+	DelayLoop(747);
 }
 
-void move_and_attack_1() // ÀüÁøÇÏ¸é¼­ Âî¸£±â
+void back_step_kick_1() // ë’¤ë¡œ íšŒì „ í›„ ë’·ë°œ ë»—ê¸°
+{
+	Send_Command(0x0f, 0xf0);
+	DelayLoop(498);
+	Send_Command(0x10, 0xef);
+	DelayLoop(1053);
+}
+
+void back_step_kick_2() // ë’¤ë¡œ íšŒì „ í›„ ë’·ë°œ ë»—ê³  2ì—°ì† í‚¥
+{
+	Send_Command(0x11, 0xee);
+	DelayLoop(498);
+	Send_Command(0x12, 0xed);
+	DelayLoop(1160);
+	Send_Command(0x13, 0xec);
+	DelayLoop(744);
+}
+
+void move_and_attack_1() // ì „ì§„í•˜ë©´ì„œ ì°Œë¥´ê¸°
 {
 	Send_Command(0x15, 0xea);
 	DelayLoop(794);
 }
-void move_and_attack_2() // ÀüÁøÇÏ¸é¼­ ½Î´Ú
+void move_and_attack_2() // ì „ì§„í•˜ë©´ì„œ ì‹¸ë‹¥
 {
 	Send_Command(0x16, 0xe9);
 	DelayLoop(720);
+}
+void move_and_attack_3()
+{
+	Send_Command(0x17, 0xe8);
+	DelayLoop(1251);
+}
+void move_and_attack_4()
+{
+	Send_Command(0x18, 0xe7);
+	DelayLoop(792);
+}
+
+void detail_turn_left()	// ì™¼ìª½ìœ¼ë¡œ 15ë„ íšŒì „
+{
+	Send_Command(0x22, 0xdd);
+	DelayLoop(407);
+}
+void detail_turn_right() // ì˜¤ë¥¸ìª½ìœ¼ë¡œ 15ë„ íšŒì „
+{
+	Send_Command(0x23, 0xdc);
+	DelayLoop(407);
+}
+
+void attack_combo_1() // ì•ìœ¼ë¡œ ì´ë™í•˜ë©´ì„œ ì°Œë¥´ê¸° í›„ ì‹¸ë‹¥ í•œë’¤ ë’¤ë¡œ ì´ë™
+{
+	Send_Command(0x25, 0xda);
+	DelayLoop(825);
+	Send_Command(0x26, 0xd9);
+	DelayLoop(895);
+	Send_Command(0x27, 0xd8);
+	DelayLoop(652);
+}
+void attack_combo_2() // ì•ìœ¼ë¡œ ì´ë™í•˜ë©´ì„œ ì‹¸ë‹¥ í›„ ë¨¸ë¦¬ë¥¼ í–¥í•´ ì°Œë¥´ê¸° ê³µê²© í›„ ë’¤ë¡œ ì´ë™
+{
+	Send_Command(0x29, 0xd6);
+	DelayLoop(634);
+	Send_Command(0x2a, 0xd5);
+	DelayLoop(793);
+	Send_Command(0x2b, 0xd4);
+	DelayLoop(652);
 }
