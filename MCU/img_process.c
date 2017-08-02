@@ -12,7 +12,18 @@
 #define RED 0
 #define GREEN 1
 #define BLUE 2
-int MCU_process(U16* buf, unsigned char image[], unsigned char gray[], int histcnt)
+#define TEST_MOTION 2
+#define DEFAULT_MOTION 2
+#define MOVE_FOWARD 4
+#define MOVE_FOWARD2 5
+#define MOVE_BACK 6
+#define TURN_LEFT 8
+#define TURN_RIGHT 9
+#define ARM_ATTACK1 12
+#define ARM_ATTACK2 0x0c
+#define MOVE_AND_ATTACK1 0x15
+#define MOVE_AND_ATTACK2 0x16
+int MCU_process(U16* buf, unsigned char image[], unsigned char gray[], int attack_count)
 {
   int i, j, cnt=0, k, l;
   int gray_cnt=0;
@@ -95,8 +106,8 @@ for(i = 178;i>=0;i--)
     }
 }
 
-for(j = 0;j<120;j++)
-buf[j*180+maxi]=0xf800;
+
+
 
 
    /*
@@ -130,7 +141,6 @@ for(i=0;i<120;i++)
     cnt+=3;
   }
 */
-return 1;
   //int R,G,B;
 /*
   cnt=0;
@@ -181,4 +191,48 @@ return 1;
     }
   }
 */
+
+
+
+///////////////////////////////////////////////////
+
+if(maxi>10 && maxi<80)
+{
+  return TURN_LEFT;
+}
+else if(maxi>140 && maxi<170)
+{
+  return TURN_RIGHT;
+}
+else if(nodapBlack[maxi]<30)
+{
+  return MOVE_FOWARD2;
+}
+else if(nodapBlack[maxi]<50)
+{
+  return MOVE_FOWARD;
+}
+
+
+else if(nodapBlack[maxi]<80)
+{
+  return MOVE_AND_ATTACK1;
+}
+
+
+else if(attack_count<=3 && nodapBlack[maxi]>80)
+{
+  ++attack_count;
+  if(attack_count%2) return ARM_ATTACK1;
+  else MOVE_AND_ATTACK2;
+}
+
+else if(attack_count>3 && nodapBlack[maxi]>80)
+{
+  attack_count=0;
+  return 2;
+}
+
+
+
 }
