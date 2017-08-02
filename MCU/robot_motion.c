@@ -38,17 +38,17 @@ void Order_to_Robot(int motion_number)
 
   switch(motion_number)
   {
-	  case 1: printf("test_motion()"); test_motion();				break;
+	   case 2: printf("test_motion()"); test_motion();				break;
 	  case 2: printf("default_motion()"); default_motion();			break;
-	  case 3: printf("move_forward()"); move_forward();				break;
-	  case 4: printf("move_forwardx2()"); move_forwardx2();			break;
-	  case 5: printf("move_back()"); move_back();					break;
-	  case 6: printf("turn_left()"); turn_left();					break;
-	  case 7: printf("turn_right()"); turn_right();					break;
-	  case 8: printf("arm_attack_1()"); arm_attack_1();				break;
-	  case 9: printf("arm_attack_2()"); arm_attack_2();				break;
-	  case 10: printf("move_and_attack_1()"); move_and_attack_1();	break;
-	  case 11: printf("move_and_attack_2()"); move_and_attack_2();	break;
+	  case 4: printf("move_forward()"); move_forward();				break;
+	  case 5: printf("move_forwardx2()"); move_forwardx2();			break;
+	  case 6: printf("move_back()"); move_back();					break;
+	  case 8: printf("turn_left()"); turn_left();					break;
+	  case 9: printf("turn_right()"); turn_right();					break;
+	  case 11: printf("arm_attack_1()"); arm_attack_1();				break;
+	  case 12: printf("arm_attack_2()"); arm_attack_2();				break;
+	  case 21: printf("move_and_attack_1()"); move_and_attack_1();	break;
+	  case 22: printf("move_and_attack_2()"); move_and_attack_2();	break;
   }
 	uart_close();
   return;
