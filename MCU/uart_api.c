@@ -85,12 +85,12 @@ int uart_read(int ch, unsigned char *ubuf, int size)
 void uart1_buffer_write(unsigned char *buf, int size)
 {
 	int ret;
-	
+
 	while(uart_tx_buf_full(UART1) == 1);
 	ret = uart_write(UART1, buf, size);
 	if(ret<0) {
 		printf("Maybe UART Buffer is Full!\n");
-	}	
+	}
 }
 
 void uart1_buffer_read(unsigned char *buf, int size)
@@ -103,9 +103,5 @@ void uart1_buffer_read(unsigned char *buf, int size)
 		rx_len = uart_rx_level(UART1);
 		uart_read(UART1, &buf[rx_cnt], rx_len);
 		if(rx_cnt + rx_len >= size) break;
-	}	
+	}
 }
-
-
-
-
