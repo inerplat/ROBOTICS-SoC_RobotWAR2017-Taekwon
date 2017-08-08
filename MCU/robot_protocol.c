@@ -1,6 +1,6 @@
 /************************************************************************
   Title     : Robot Body Protocol Source File
-  File name : robot_protocol.c    
+  File name : robot_protocol.c
 
   Author    : adc inc. (oxyang@adc.co.kr)
   History
@@ -19,7 +19,7 @@ void DelayLoop(int delay_time)
 	// ms 단위로 카운트 하도록 제작
 	delay_time += 300; // 모션 간 추가 딜레이 (모션 씹힘방지)
 	delay_time *= 1660;
-	
+
 	while(delay_time)
 		delay_time--;
 }
@@ -98,16 +98,19 @@ void arm_attack_1() // 찌르기
 {
 	Send_Command(0x0b, 0xf4);
 	DelayLoop(976);
+	DelayLoop(815);
 }
 void arm_attack_2() // 싸닥
 {
 	Send_Command(0x0c, 0xf3);
 	DelayLoop(691);
+	DelayLoop(815);
 }
 void arm_attack_3() // 대각선 앞 위로
 {
 	Send_Command(0x0d, 0xf2);
 	DelayLoop(747);
+	DelayLoop(815);
 }
 
 void back_step_kick_1() // 뒤로 회전 후 뒷발 뻗기

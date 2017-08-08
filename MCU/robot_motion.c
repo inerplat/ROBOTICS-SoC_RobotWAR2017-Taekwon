@@ -38,7 +38,6 @@ void Order_to_Robot(int motion_number)
 
   switch(motion_number)
   {
-	  case 2: printf("test_motion()"); test_motion();				break;
 	  case 2: printf("default_motion()"); default_motion();			break;
 	  case 4: printf("move_forward()"); move_forward();				break;
 	  case 5: printf("move_forwardx2()"); move_forwardx2();			break;

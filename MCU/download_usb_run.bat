@@ -1,1 +1,1 @@
-"D:\tools\RemoteManCLI.exe" -target usb -fw 0x0 graphic_test -run 0x0 -q
+RemoteManCLI.exe -target usb -rfw /mnt/f0/4gangkick ROBOTICS -run 0 -exit
