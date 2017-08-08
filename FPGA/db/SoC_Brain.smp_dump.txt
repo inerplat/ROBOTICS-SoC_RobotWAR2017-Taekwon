@@ -1,0 +1,6 @@
+
+State Machine - |FPGA_Processing|Img_state
+Name Img_state.00 Img_state.10 Img_state.01 
+Img_state.00 0 0 0 
+Img_state.01 1 0 1 
+Img_state.10 1 1 0 
