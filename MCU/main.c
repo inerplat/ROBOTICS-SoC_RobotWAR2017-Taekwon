@@ -44,9 +44,9 @@ int main(int argc, char **argv)
 		draw_fpga_video_data_full(fpga_videodata);	//보드에 fpga영상 데이터를 출력
 		flip();
 
-		//Order_to_Robot(motion);
 		//DelayLoop(100);
-		//motion=MCU_analysis(fpga_videodata); // 영상에대한 분석작업
+	//	motion=MCU_process(fpga_videodata); // 영상에대한 분석작업
+		Order_to_Robot(motion);
 		 // 가장 적절한 모션을 수행
 /*
 		if(direct_camera_display_stat() > 0) {

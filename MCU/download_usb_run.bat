@@ -1,1 +1,1 @@
-RemoteManCLI.exe -target usb -rfw /mnt/f0/no_kick ROBOTICS -run 0 -exit
+RemoteManCLI.exe -target usb -rfw /mnt/f0/ass_hole ROBOTICS -run 0 -exit
