@@ -30,7 +30,7 @@ void Send_Command(unsigned char Ldata, unsigned char Ldata1)
 
 	Command_Buffer[0] = START_CODE;	// Start Byte -> 0xff
 	Command_Buffer[1] = START_CODE1; // Start Byte1 -> 0x55
-        Command_Buffer[2] = Ldata;
+    Command_Buffer[2] = Ldata;
 	Command_Buffer[3] = Ldata1;
 	Command_Buffer[4] = Hdata;  // 0x00
 	Command_Buffer[5] = Hdata1; // 0xff
@@ -83,41 +83,45 @@ void turn_left()// 왼쪽으로 30도 회전
 {
 	printf("\nmotion started\n");
 	Send_Command(0x08, 0xf7);
-	DelayLoop(815);
+	DelayLoop(448);
 	printf("motion end\n");
 }
 void turn_right() // 오른쪽으로 30도 회전
 {
 	printf("\nmotion started\n");
 	Send_Command(0x09, 0xf6);
-	DelayLoop(815);
+	DelayLoop(448);
 	printf("motion end\n");
 }
 
 void arm_attack_1() // 찌르기
 {
 	Send_Command(0x0b, 0xf4);
-	DelayLoop(976);
+	DelayLoop(640);
 	DelayLoop(815);
 }
 void arm_attack_2() // 싸닥
 {
 	Send_Command(0x0c, 0xf3);
-	DelayLoop(691);
+	DelayLoop(689);
 	DelayLoop(815);
 }
 void arm_attack_3() // 대각선 앞 위로
 {
 	Send_Command(0x0d, 0xf2);
-	DelayLoop(747);
+	DelayLoop(728);
 	DelayLoop(815);
 }
-
+void arm_attack_4() // 뚝배기
+{
+	Send_Command(0x0e, 0xf1);
+	DelayLoop(2028);
+	DelayLoop(815);
+}
 void back_step_kick_1() // 뒤로 회전 후 뒷발 뻗기
 {
 	Send_Command(0x0f, 0xf0);
-	DelayLoop(498);
-	Send_Command(0x10, 0xef);
+	DelayLoop(476);
 	DelayLoop(1053);
 }
 
@@ -125,18 +129,16 @@ void back_step_kick_2() // 뒤로 회전 후 뒷발 뻗고 2연속 킥
 {
 	Send_Command(0x11, 0xee);
 	DelayLoop(498);
-	Send_Command(0x12, 0xed);
-	DelayLoop(1160);
-	Send_Command(0x13, 0xec);
+	DelayLoop(1190);
 	DelayLoop(744);
 }
 
-void move_and_attack_1() // 전진하면서 찌르기
+void move_and_attack_1() // 전진하면서 싸닥
 {
 	Send_Command(0x15, 0xea);
-	DelayLoop(794);
+	DelayLoop(1110);
 }
-void move_and_attack_2() // 전진하면서 싸닥
+void move_and_attack_2() // 전진하면서 찌르기
 {
 	Send_Command(0x16, 0xe9);
 	DelayLoop(720);
@@ -144,7 +146,7 @@ void move_and_attack_2() // 전진하면서 싸닥
 void move_and_attack_3()
 {
 	Send_Command(0x17, 0xe8);
-	DelayLoop(1251);
+	DelayLoop(1247);
 }
 void move_and_attack_4()
 {
@@ -152,32 +154,28 @@ void move_and_attack_4()
 	DelayLoop(792);
 }
 
-void detail_turn_left()	// 왼쪽으로 15도 회전
+void detail_turn_left()	// 왼쪽으로 약간 회전
 {
-	Send_Command(0x22, 0xdd);
-	DelayLoop(407);
+	Send_Command(0x1f, 0xe0);
+	DelayLoop(166);
 }
-void detail_turn_right() // 오른쪽으로 15도 회전
+void detail_turn_right() // 오른쪽으로 약간 회전
 {
-	Send_Command(0x23, 0xdc);
-	DelayLoop(407);
+	Send_Command(0x20, 0xdf);
+	DelayLoop(166);
 }
 
 void attack_combo_1() // 앞으로 이동하면서 찌르기 후 싸닥 한뒤 뒤로 이동
 {
 	Send_Command(0x25, 0xda);
-	DelayLoop(825);
-	Send_Command(0x26, 0xd9);
-	DelayLoop(895);
-	Send_Command(0x27, 0xd8);
-	DelayLoop(652);
+	DelayLoop(804);
+	DelayLoop(892);
+	DelayLoop(681);
 }
 void attack_combo_2() // 앞으로 이동하면서 싸닥 후 머리를 향해 찌르기 공격 후 뒤로 이동
 {
 	Send_Command(0x29, 0xd6);
-	DelayLoop(634);
-	Send_Command(0x2a, 0xd5);
-	DelayLoop(793);
-	Send_Command(0x2b, 0xd4);
-	DelayLoop(652);
+	DelayLoop(618);
+	DelayLoop(774);
+	DelayLoop(331);
 }
